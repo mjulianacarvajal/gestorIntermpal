@@ -1,0 +1,91 @@
+{% load customfilter %}
+{% load humanize %}
+<div class="container-fluid">
+    <form action=" " id="despacho-form">
+        {% csrf_token %}
+        <input type="hidden" name="id" value="{{ despacho.id }}">
+        <input type="hidden" name="codigo" value="1">
+        <input type="hidden" name="programado" value="{{ programado.id }}">
+        <div class="form-group mb-3">
+            <label for="nombre" class="control-label">Nombre Conductor</label>
+            <input class="form-control rounded-0" name="nombre" id="nombre" type="text" value="{{ despacho.nombre }}" required>
+        </div>
+        <div class="form-group mb-3">
+            <label for="asientos" class="control-label">Asientos Ocupados</label>
+            <input class="form-control rounded-0" name="asientos" id="asientos" max="{{ programado.count_asientosdisponibles|floatformat:0 }}" type="number" value="{{ book.asientos }}" required>
+        </div>
+        <div class="form-group mb-3">
+            <label for="precio" class="control-label">Precio</label>
+            <input class="form-control rounded-0 text-end" id="precio" type="text" value="{{  programado.precio|intcomma }}" disabled>
+        </div>
+        <div class="form-group mb-3">
+            <label for="payable" class="control-label">Cantidad Facturada</label>
+            <input class="form-control rounded-0 tex t-end" id="payable" type="text" value="{% if despacho.total_payable %}{{ despacho.total_facturable }}{% else %}0.00{% endif %}" disabled>
+            <input class="form-control rounded-0 text-end" id="payable" type="text" value="{% if despacho.total_payable %}{{ despacho.total_facturable }}{% else %}0.00{% endif %}" disabled>
+        </div>
+    </form>
+</div>
+{#paseFLota a ParseInteger asientos#}
+<script>
+    $(function() {
+        $('#asientos').on('input change',function(){
+            var precio = $('#precio').val()
+                precio = precio.replace(/'/gi,'')
+            var asientos = $(this).val()
+            var total = parseFloat(asientos) * parseFloat(asientos)
+            total = total > 0 ? total :0
+            $('#payable').val(parseFloat(total).toLocaleString('en-US'))
+        })
+        $('#empresa').select2({
+            width:"100%",
+            placeholder: "Please Select Cate" +
+                "" +
+                "gory Here",
+            dropdownParent:$('#uni_modal')
+        })
+        $('#despacho-form').submit(function(e) {
+            e.preventDefault();
+            var _this = $(this)
+            $('.err-msg').remove();
+            var el = $('<div>')
+            el.addClass("alert alert-danger err-msg")
+            el.hide()
+            if (_this[0].checkValidity() == false) {
+                _this[0].reportValidity();
+                return false;
+            }
+            start_loader();
+            $.ajax({
+                url: "{% url 'save-book' %}",
+                data: new FormData($(this)[0]),
+                cache: false,
+                contentType: false,
+                processData: false,
+                method: 'POST',
+                type: 'POST',
+                dataType: 'json',
+                error: err => {
+                    console.log(err)
+                    alert("An error occured ", 'error');
+                    end_loader();
+                },
+                success: function(resp) {
+                    if (typeof resp == 'object' && resp.status == 'success') {
+                        el.removeClass("alert alert-danger err-msg ")
+                        location.reload()
+                    } else if (resp.status == 'failed' && !!resp.msg) {
+                        el.html(resp.msg)
+                    } else {
+                        el.text("An error occured ", 'error');
+                        end_loader();
+                        console.err(resp)
+                    }
+                    _this.prepend(el)
+                    el.show('slow')
+                    $("html, body, .modal ").scrollTop(0);
+                    end_loader()
+                }
+            })
+        })
+    })
+</script>

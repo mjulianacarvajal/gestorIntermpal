@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="db.sqlite3" uuid="a8099d0a-40f3-4e0f-bdcd-dc51f3dd64e6">
+      <driver-ref>02d66ee4-49d8-4f4c-ad79-39dc1accd2d1</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-url>jdbc::$PROJECT_DIR$/../../../../gestor_intermpal/gestor/db.sqlite3</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+  </component>
+</project>

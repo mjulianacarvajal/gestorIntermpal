@@ -1,0 +1,100 @@
+{% load customfilter %}
+<div class="container-fluid">
+    <form action=" " id="bus-form">
+        {% csrf_token %}
+        <input type="hidden" name="id" value="{{ bus.id }}">
+        <div class="form-group mb-3 ">
+            <label for="empresa" class="control-label">Empresa</label>
+            <select name="empresa" id="empresa" class="form-select rounded-0">
+                {% if not bus.empresa %}
+                <option selected></option>
+                {% else %}
+                <option ></option>
+                {% endif %}
+                {% for empresa in empresas %}
+                {% if bus.categoria.id == categoria.id %}
+                <option value="{{ empresa.id }}" selected>{{ empresa }}</option>
+                {% else %}
+                <option value="{{ empresa.id }}">{{ empresa }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group mb-3">
+            <label for="numero_bus" class="control-label">Bus #</label>
+            <input class="form-control rounded-0" name="numero_bus " id="numero_bus " type="text" value="{{ bus.numero_bus }}" required>
+        </div>
+        <div class="form-group mb-3">
+            <label for="asientos" class="control-label">Asientos</label>
+            <input class="form-control rounded-0" name="asientos" id="asientos" type="number" value="{{ bus.asientos }}" required>
+        </div>
+        <div class="form-group mb-3 ">
+            <label for="estado" class="control-label">Estado</label>
+            <select name="estado" id=estado class="form-select rounded-0">
+                {% if not bus.estado or bus.estado == '1' %}
+                <option value="1" selected>Active</option>
+                {% else %}
+                <option value="1" >Active</option>
+                {% endif %}
+                {% if bus.estado == '2' %}
+                <option value="2" selected>Inactivo</option>
+                {% else %}
+                <option value="2" >Inactivo</option>
+                {% endif %}
+            </select>
+        </div>
+    </form>
+</div>
+<script>
+    $(function() {
+        $('#categoria').select2({
+            width:"100%",
+            placeholder: "Please Select Category Here",
+            dropdownParent:$('#uni_modal')
+        })
+        $('#bus-form').submit(function(e) {
+            e.preventDefault();
+            var _this = $(this)
+            $('.err-msg').remove();
+            var el = $('<div>')
+            el.addClass("alert alert-danger err-msg")
+            el.hide()
+            if (_this[0].checkValidity() == false) {
+                _this[0].reportValidity();
+                return false;
+            }
+            start_loader();
+            $.ajax({
+                url: "{% url 'guardar-bus' %}",
+                data: new FormData($(this)[0]),
+                cache: false,
+                contentType: false,
+                processData: false,
+                method: 'POST',
+                type: 'POST',
+                dataType: 'json',
+                error: err => {
+                    console.log(err)
+                    alert("An error occured ", 'error');
+                    end_loader();
+                },
+                success: function(resp) {
+                    if (typeof resp == 'object' && resp.status == 'success') {
+                        el.removeClass("alert alert-danger err-msg ")
+                        location.reload()
+                    } else if (resp.status == 'failed' && !!resp.msg) {
+                        el.html(resp.msg)
+                    } else {
+                        el.text("An error occured ", 'error');
+                        end_loader();
+                        console.err(resp)
+                    }
+                    _this.prepend(el)
+                    el.show('slow')
+                    $("html, body, .modal ").scrollTop(0);
+                    end_loader()
+                }
+            })
+        })
+    })
+</script>

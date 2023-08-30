@@ -1,0 +1,104 @@
+{% extends "base.html" %} {% load humanize %} {% block pageContent %}
+
+<!--Section: Content-->
+<section class="">
+    {% if user.id %}
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="card rounded-0 shadow border-primary text-start summary-card my-3">
+                <div class="card-body">
+                    <div class="d-flex w-100">
+                        <div class="col-8 pe-2">
+                            <div class="summary-title fs-5 border-bottom">Empresas Operando</div>
+                            <div class="summary-count text-end fw-bolder mt-3 px-4">{{ empresas }}</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="summary-icon p-3 rounded border text-center bg-gradient bg-light">
+                                <i class="fa fa-list"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="card rounded-0 shadow border-warning text-start summary-card my-3">
+                <div class="card-body">
+                    <div class="d-flex w-100">
+                        <div class="col-8 pe-2">
+                            <div class="summary-title fs-5 border-bottom">Total Buses</div>
+                            <div class="summary-count text-end fw-bolder mt-3 px-4">{{ buses }}</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="summary-icon p-3 rounded border text-center bg-gradient bg-light">
+                                <i class="fa fa-bus fs-2"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div class="card rounded-0 shadow border-success text-start summary-card my-3">
+                <div class="card-body">
+                    <div class="d-flex w-100">
+                        <div class="col-8 pe-2">
+                            <div class="summary-title fs-5 border-bottom">Total Upcoming Trip</div>
+                            <div class="summary-count text-end fw-bolder mt-3 px-4">{{ upcoming_trip|intcomma }}</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="summary-icon p-3 rounded border text-center bg-gradient bg-light">
+                                <i class="fa fa-file-invoice fs-2"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+
+    <div class="card card-default rounded-0 shadow border border-dark">
+        <div class="card-body">
+            <div class="container-fluid">
+                <h2 class="text-center fw-bold">Bienvenido</h2>
+                <div class="col-sm-4">
+                                    <h5>Gráfico 1</h5>
+
+                    <canvas id="myChart" width="75" height="75"></canvas>
+                        <script>
+                            var ctx= document.getElementById("myChart").getContext("2d");
+                            var myChart= new Chart(ctx,{
+                                type:"bar",
+                                data:{
+                                    labels:[],
+                                    datasets:[{
+                                            label:'Num datos',
+                                            data:[],
+                                            backgroundColor:[
+                                                'rgb(66, 134, 244,0.5)',
+                                                'rgb(74, 135, 72,0.5)',
+                                                'rgb(229, 89, 50,0.5)'
+                                            ]
+                                    }]
+                                },
+                                options:{
+                                    scales:{
+                                        yAxes:[{
+                                                ticks:{
+                                                    beginAtZero:true
+                                                }
+                                        }]
+                                    }
+                                }
+                            });
+                        </script>
+                    </div>
+               </div>
+        </div>
+    </div>
+    {% endif %}
+</section>
+
+
+</div> {% endblock pageContent %}
